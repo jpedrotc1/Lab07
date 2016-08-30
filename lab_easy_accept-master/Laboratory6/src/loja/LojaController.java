@@ -17,24 +17,27 @@ import jogo.Jogo;
 import jogo.Luta;
 import jogo.Plataforma;
 import jogo.Rpg;
+import usuario.FactoryUsuarios;
 import usuario.Noob;
 import usuario.Usuario;
 import usuario.Veterano;
 
-public class Facade {
+public class LojaController {
 	public static final String FIM_DE_LINHA = System.lineSeparator();
 	private List<Usuario> meusUsuarios;
 	private HashMap<String, Jogabilidade> mapJogabildades;
+	private FactoryUsuarios farbrica;
 
-	public Facade() {
+	public LojaController() {
 		this.meusUsuarios = new ArrayList<Usuario>();
 		this.initializeMap();
+		this.farbrica = new FactoryUsuarios();
 	}
 
-	public void adicionaUsuario(String nome, String login) {
+	public void adicionaUsuario(String nome, String login,String tipo) {
 		try {
-			Usuario novoUser = new Noob(nome, login);
-			meusUsuarios.add(novoUser);
+			Usuario novo = this.criaUsuario(nome, login, tipo);
+			meusUsuarios.add(novo);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -94,7 +97,7 @@ public class Facade {
 	public void upgrade(String login) throws Exception {
 		Usuario antigo = this.buscaUsuario(login);
 		if (antigo instanceof Veterano) {
-			throw new UpgradeInvalidoException("Impossivel realizar upgrade, quantidade de x2p insuficiente!");
+			throw new UpgradeInvalidoException("Upgrade impossivel de ser realizado, usuario ja eh veterano");
 		} else if (antigo.getXp2() < 1000) {
 			throw new UpgradeInvalidoException("Impossivel realizar upgrade, quantidade de x2p insuficiente!");
 		}
@@ -171,11 +174,21 @@ public class Facade {
 		mapJogabildades.put("MULTIPLAYER", Jogabilidade.MULTIPLAYER);
 
 	}
-
-	public static void main(String[] args) {
-		args = new String[] { "loja.Facade", "acceptance_test/us1.txt", "acceptance_test/us2.txt",  "acceptance_test/us3.txt" };
-		EasyAccept.main(args);
-
+	
+	//Alterado
+	public Usuario criaUsuario(String nome,String login,String tipo){
+		try{
+		return this.farbrica.criaUsuarios(nome, login, tipo);
+		}catch(Exception e){
+			e.getMessage();
+		}
+		return null;
 	}
+
+	//*public static void main(String[] args) {
+		//args = new String[] { "loja.Facade", "acceptance_test/us1.txt", "acceptance_test/us2.txt",  "acceptance_test/us3.txt" };
+		//EasyAccept.main(args);
+
+	//}
 
 }
