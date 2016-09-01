@@ -31,6 +31,10 @@ public abstract class Usuario {
 		meusJogos = new HashSet<Jogo>();
 		this.credito = 0;
 	}
+	
+	public abstract void recompensar(String nomeJogo, int scoreObtido, boolean zerou) throws Exception;
+	
+	public abstract void punir(String nomeJogo, int scoreObtido, boolean zerou)throws Exception;
 
 	public abstract void compraJogo(Jogo jogo) throws Exception;
 
@@ -68,14 +72,6 @@ public abstract class Usuario {
 
 	public double getCredito() {
 		return this.credito;
-	}
-
-	public void registradaJogada(String nomeJogo, int score, boolean venceu) throws Exception {
-		Jogo jogo = this.buscaJogo(nomeJogo);
-		if (jogo == null) {
-			throw new Exception();
-		}
-		setXp2(getXp2() + jogo.registraJogada(score, venceu));
 	}
 
 	public Jogo buscaJogo(String nomeJogo) {
@@ -117,4 +113,9 @@ public abstract class Usuario {
 			return false;
 		}
 	}
+	
+	
+	
+	
+	
 }

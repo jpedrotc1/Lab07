@@ -5,6 +5,7 @@ import java.util.Iterator;
 import excecoes.StringInvalidaException;
 import excecoes.ValorInvalidoException;
 import jogo.Jogo;
+import jogo.Jogabilidade;
 
 public class Noob extends Usuario {
 	public static final double DESCONTO_NOOB = 0.9;
@@ -42,9 +43,61 @@ public class Noob extends Usuario {
 			myString += j.toString();
 		}
 		myString += FIM_DE_LINHA;
-		myString += "Total de pre�o dos jogos: R$ " + this.calculaPrecoTotal() + FIM_DE_LINHA;
+		myString += "Total de preço dos jogos: R$ " + this.calculaPrecoTotal() + FIM_DE_LINHA;
 		myString += "--------------------------------------------";
 		return myString;
+	}
+
+	@Override
+	public void recompensar(String nomeJogo, int scoreObtido, boolean zerou) throws Exception {
+		Jogo jogo = this.buscaJogo(nomeJogo);
+		
+		if (jogo == null) {
+			throw new Exception();
+		}
+		setXp2(getXp2() + jogo.registraJogada(scoreObtido, zerou));
+		
+		for(Jogabilidade j : jogo.getJogabilidades()){
+			if(j.equals(Jogabilidade.OFFLINE)){
+				setXp2(getXp2() +30);
+				
+			}
+			
+			if(j.equals(Jogabilidade.MULTIPLAYER)){
+				setXp2(getXp2() +10);
+			}
+			
+	  }
+	}
+
+	@Override
+	public void punir(String nomeJogo, int scoreObtido, boolean zerou) throws Exception {
+		
+		Jogo jogo = this.buscaJogo(nomeJogo);
+		
+		if (jogo == null) {
+			throw new Exception();
+		}
+		setXp2(getXp2() + jogo.registraJogada(scoreObtido, zerou));
+		
+		for(Jogabilidade j : jogo.getJogabilidades()){
+			
+			if(j.equals(Jogabilidade.ONLINE)){
+				setXp2(getXp2() -10);
+				
+			}
+			
+			if(j.equals(Jogabilidade.COMPETITIVO)){
+				setXp2(getXp2() -20);
+			}
+			
+			if(j.equals(Jogabilidade.COOPERATIVO)){
+				setXp2(getXp2() - 50);
+			}
+			
+			
+		}
+		
 	}
 
 }

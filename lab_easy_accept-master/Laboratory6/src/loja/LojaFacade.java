@@ -28,9 +28,17 @@ public class LojaFacade {
 		}
 	}
 	
-	public void registraJogada(String login, String nomeJogo, int score, boolean venceu){
+	public void punir(String login, String nomeJogo, int score, boolean venceu){
 		try{
-			this.loja.registraJogada(login, nomeJogo, score, venceu);
+			this.loja.punir(login, nomeJogo, score, venceu);
+		}catch (Exception e){
+			e.getMessage();
+		}
+	}
+	
+	public void recompensar(String login, String nomeJogo, int score, boolean venceu){
+		try{
+			this.loja.recompensar(login, nomeJogo, score, venceu);
 		}catch (Exception e){
 			e.getMessage();
 		}

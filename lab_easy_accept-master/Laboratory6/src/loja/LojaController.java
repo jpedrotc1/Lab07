@@ -44,11 +44,16 @@ public class LojaController {
 			buscado.compraJogo(jogoVendido);
 	}
 
-	public void registraJogada(String login, String nomeJogo, int score, boolean venceu)throws Exception {
+	public void punir(String login, String nomeJogo, int score, boolean venceu)throws Exception {
 			Usuario usr = this.buscaUsuario(login);
-			usr.registradaJogada(nomeJogo, score, venceu);
+			usr.punir(nomeJogo, score, venceu);
 	}
-
+	
+	public void recompensar(String login, String nomeJogo, int score, boolean venceu)throws Exception{
+		Usuario usr = this.buscaUsuario(login);
+		usr.recompensar(nomeJogo, score, venceu);
+	}
+	
 	public void adicionaCredito(String login, double credito)throws Exception {
 		if (credito < 0) {
 			throw new ValorInvalidoException("Credito nao pode ser negativo");
@@ -97,7 +102,7 @@ public class LojaController {
 	private Set<Jogabilidade> createJogabilidades(String names1) {
 		Set<Jogabilidade> jogabilidades = new HashSet<Jogabilidade>();
 
-		String[] listofNames = names1.split(",");
+		String[] listofNames = names1.split(" ");
 
 		for (int i = 0; i < listofNames.length; i++) {
 			String element = listofNames[i].toUpperCase();
