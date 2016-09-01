@@ -32,7 +32,7 @@ public class Veterano extends Usuario {
 	@Override
 	public String toString() {
 		String myString = this.getLogin() + FIM_DE_LINHA;
-		myString += this.getNome() + " - Jogador Veterano" + FIM_DE_LINHA;
+		myString += this.getNome() + " - Jogador Veterano " + this.getXp2() + FIM_DE_LINHA;
 		myString += "Lista de Jogos:" + FIM_DE_LINHA;
 
 		Iterator itr = getMeusJogos().iterator();

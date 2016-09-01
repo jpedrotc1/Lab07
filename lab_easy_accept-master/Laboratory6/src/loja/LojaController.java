@@ -12,6 +12,7 @@ import excecoes.PrecoInvalidoException;
 import excecoes.StringInvalidaException;
 import excecoes.UpgradeInvalidoException;
 import excecoes.ValorInvalidoException;
+import jogo.FactoryJogos;
 import jogo.Jogabilidade;
 import jogo.Jogo;
 import jogo.Luta;
@@ -26,71 +27,44 @@ public class LojaController {
 	public static final String FIM_DE_LINHA = System.lineSeparator();
 	private List<Usuario> meusUsuarios;
 	private HashMap<String, Jogabilidade> mapJogabildades;
-	private FactoryUsuarios farbrica;
+	private FactoryUsuarios farbricaUsuarios;
+	private FactoryJogos fabricaJogos;
 
 	public LojaController() {
 		this.meusUsuarios = new ArrayList<Usuario>();
 		this.initializeMap();
-		this.farbrica = new FactoryUsuarios();
+		this.farbricaUsuarios = new FactoryUsuarios();
+		this.fabricaJogos = new FactoryJogos();
 	}
 
-	public void adicionaUsuario(String nome, String login,String tipo) {
-		try {
-			Usuario novo = this.criaUsuario(nome, login, tipo);
-			meusUsuarios.add(novo);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-	}
-
-	public void vendeJogo(String jogoNome, double preco, String jogabilidades, String estiloJogo, String loginUser) {
-
-		try {
+	public void vendeJogo(String jogoNome, double preco, String jogabilidades, String estiloJogo, String loginUser)throws Exception {
 			Usuario buscado = this.buscaUsuario(loginUser);
 			Set<Jogabilidade> tiposJogabilidades = this.createJogabilidades(jogabilidades);
-			Jogo jogoVendido = this.criaJogo(jogoNome, preco, tiposJogabilidades, estiloJogo);
+			Jogo jogoVendido = this.criaJogo(jogoNome,estiloJogo,preco,tiposJogabilidades);
 			buscado.compraJogo(jogoVendido);
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
-	public void registraJogada(String login, String nomeJogo, int score, boolean venceu) {
-		try {
+	public void registraJogada(String login, String nomeJogo, int score, boolean venceu)throws Exception {
 			Usuario usr = this.buscaUsuario(login);
 			usr.registradaJogada(nomeJogo, score, venceu);
-		} catch (Exception e) {
-			e.getMessage();
-		}
-
 	}
 
-	public void adicionaCredito(String login, double credito) {
-		try {
-			if (credito < 0) {
-				throw new ValorInvalidoException("Credito nao pode ser negativo");
+	public void adicionaCredito(String login, double credito)throws Exception {
+		if (credito < 0) {
+			throw new ValorInvalidoException("Credito nao pode ser negativo");
 			}
 			Usuario user = this.buscaUsuario(login);
 			user.setCredito(user.getCredito() + credito);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
+		
 	}
 
-	public Usuario buscaUsuario(String login) {
+	public Usuario buscaUsuario(String login)throws Exception {
 		Usuario buscado = null;
-
-		try {
 			for (int i = 0; i < meusUsuarios.size(); i++) {
 				if (meusUsuarios.get(i).getLogin().equals(login)) {
 					buscado = meusUsuarios.get(i);
 				}
 			}
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
 		return buscado;
 	}
 
@@ -110,42 +84,14 @@ public class LojaController {
 
 	}
 
-	public double confereCredito(String login) {
-		try {
+	public double confereCredito(String login)throws Exception {
 			Usuario procurado = this.buscaUsuario(login);
 			return procurado.getCredito();
-		} catch (Exception e) {
-			e.getMessage();
-		}
-		return 0;
 	}
 
-	public String informacaoUsuarios() {
-		String myString = "=== Central P2-CG ===" + FIM_DE_LINHA + FIM_DE_LINHA;
-		for (int i = 0; i < meusUsuarios.size(); i++) {
-			myString += meusUsuarios.get(i).toString() + FIM_DE_LINHA;
-		}
-		return myString;
-	}
-
-	public int getX2p(String login) {
+	public int getX2p(String login)throws Exception {
 		Usuario buscado = this.buscaUsuario(login);
 		return buscado.getXp2();
-	}
-
-	private Jogo criaJogo(String jogoNome, double preco, Set<Jogabilidade> tiposJogabilidades, String estiloJogo)
-			throws StringInvalidaException, PrecoInvalidoException {
-
-		String estilo = estiloJogo.toLowerCase();
-		if (estilo.equals("rpg")) {
-			return new Rpg(jogoNome, preco, tiposJogabilidades);
-		} else if (estilo.equals("plataforma")) {
-			return new Plataforma(jogoNome, preco, tiposJogabilidades);
-		} else if (estilo.equals("luta")) {
-			return new Luta(jogoNome, preco, tiposJogabilidades);
-		} else {
-			return null;
-		}
 	}
 
 	private Set<Jogabilidade> createJogabilidades(String names1) {
@@ -176,19 +122,25 @@ public class LojaController {
 	}
 	
 	//Alterado
-	public Usuario criaUsuario(String nome,String login,String tipo){
-		try{
-		return this.farbrica.criaUsuarios(nome, login, tipo);
-		}catch(Exception e){
-			e.getMessage();
-		}
-		return null;
+	public void criaUsuario(String nome,String login,String tipo)throws Exception{
+		meusUsuarios.add(this.farbricaUsuarios.criaUsuarios(nome, login, "Noob"));
+	}
+	
+	private Jogo criaJogo(String nome,String tipo,double preco,Set<Jogabilidade> jogabilidades)throws Exception{
+			return this.fabricaJogos.criaJogos(nome, preco,tipo, jogabilidades);
+	
 	}
 
-	//*public static void main(String[] args) {
-		//args = new String[] { "loja.Facade", "acceptance_test/us1.txt", "acceptance_test/us2.txt",  "acceptance_test/us3.txt" };
-		//EasyAccept.main(args);
-
-	//}
-
+	@Override
+	public String toString(){
+		String myString = "";
+		
+		for(Usuario usuario: meusUsuarios){
+			myString += usuario.toString();
+		}
+		
+		return "=== Central P2-CG ===" +FIM_DE_LINHA + FIM_DE_LINHA + myString + FIM_DE_LINHA + FIM_DE_LINHA + "-------------------";
+		
+	}
+	
 }
