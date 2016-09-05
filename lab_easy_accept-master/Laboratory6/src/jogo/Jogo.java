@@ -89,6 +89,10 @@ public abstract class Jogo {
 		return this.jogabilidades;
 	}
 	
+	public Set<Jogabilidade> getJogabilidade(){
+		return this.jogabilidades;
+	}
+	
 
 	@Override
 	public String toString() {
